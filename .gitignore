@@ -1,0 +1,12 @@
+*.dat
+*.out
+*.txt
+*.sout
+test*.pl
+*test.pl
+/cifs
+/cif2data
+/data2QE4MatCld
+/QEinByMatCld
+/QE_trimmed
+nohup.out
