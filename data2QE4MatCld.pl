@@ -277,7 +277,7 @@ tempw = $QE_hr->{temp}
 !press_conv_thr = 0.1
 cell_dynamics = "pr"
 press = $QE_hr->{press}
-cell_dofree = "volume"
+cell_dofree = "all"
 /
 K_POINTS {automatic}
 2 2 2 0 0 0
