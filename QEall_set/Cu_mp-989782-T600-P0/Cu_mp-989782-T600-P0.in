@@ -1,0 +1,62 @@
+&CONTROL
+calculation = "vc-md"
+nstep = 200
+etot_conv_thr = 1.0d-5
+forc_conv_thr = 1.0d-4
+disk_io = '/dev/null'
+pseudo_dir = '/opt/QEpot/SSSP_efficiency_pseudos/'
+tprnfor = .true.
+tstress = .true.
+verbosity = 'high'
+dt = 20
+/
+&SYSTEM
+ntyp =  1
+occupations = 'smearing' !
+smearing = 'gaussian'
+degauss =   0.035
+ecutrho =   1080
+ecutwfc =   90
+ibrav = 0
+nat = 8
+nosym = .TRUE.
+starting_magnetization(1) =   1.0000000000d-01
+nspin = 2
+/
+&ELECTRONS
+conv_thr =   2.d-6
+electron_maxstep = 200
+mixing_beta =   0.2
+mixing_mode = 'plain' !'local-TF'
+mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
+diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
+diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+/
+&IONS
+ion_dynamics = "beeman"
+ion_temperature = "rescaling"
+tempw = 600
+/
+&CELL
+press = 0
+cell_dynamics = "pr"
+press = 0
+cell_dofree = "all"
+/
+K_POINTS {automatic}
+5 5 6 0 0 0
+ATOMIC_SPECIES
+Cu     63.546 Cu.paw.z_11.ld1.psl.v1.0.0-low.upf
+ATOMIC_POSITIONS {angstrom}
+Cu -1.267e-08 1.463061401892 1.02814275
+Cu 1.26704834767 0.731530689973 3.08442825
+Cu 2.53409665733 1.463061401892 1.02814275
+Cu 3.80114501767 0.731530689973 3.08442825
+Cu -1.26704834767 3.657653493758 1.02814275
+Cu 1.267e-08 2.926122781839 3.08442825
+Cu 1.26704832233 3.657653493758 1.02814275
+Cu 2.53409668267 2.926122781839 3.08442825
+CELL_PARAMETERS {angstrom}
+5.068193 0.00 0.00
+-2.534097 4.389184 0.00
+0.000000 0.000000 4.112571

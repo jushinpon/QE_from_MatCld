@@ -1,0 +1,58 @@
+&CONTROL
+calculation = "vc-md"
+nstep = 200
+etot_conv_thr = 1.0d-5
+forc_conv_thr = 1.0d-4
+disk_io = '/dev/null'
+pseudo_dir = '/opt/QEpot/SSSP_efficiency_pseudos/'
+tprnfor = .true.
+tstress = .true.
+verbosity = 'high'
+dt = 20
+/
+&SYSTEM
+ntyp =  1
+occupations = 'smearing' !
+smearing = 'gaussian'
+degauss =   0.035
+ecutrho =   1080
+ecutwfc =   90
+ibrav = 0
+nat = 4
+nosym = .TRUE.
+starting_magnetization(1) =   2.7777777778d-01
+nspin = 2
+/
+&ELECTRONS
+conv_thr =   2.d-6
+electron_maxstep = 200
+mixing_beta =   0.2
+mixing_mode = 'plain' !'local-TF'
+mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
+diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
+diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+/
+&IONS
+ion_dynamics = "beeman"
+ion_temperature = "rescaling"
+tempw = 600
+/
+&CELL
+press = 0
+cell_dynamics = "pr"
+press = 0
+cell_dofree = "all"
+/
+K_POINTS {automatic}
+6 9 2 0 0 0
+ATOMIC_SPECIES
+Ni     58.6934 ni_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS {angstrom}
+Ni 0.936571405417 0.590771955 8.494819086287
+Ni 0.961703410029 0.590771955 6.262955334801
+Ni 3.001471971393 1.772315865 6.283339735954
+Ni 2.97633996678 1.772315865 8.51520348744
+CELL_PARAMETERS {angstrom}
+4.076140 0.00 0.00
+0.000000 2.363088 0.00
+-0.138097 0.000000 14.778159

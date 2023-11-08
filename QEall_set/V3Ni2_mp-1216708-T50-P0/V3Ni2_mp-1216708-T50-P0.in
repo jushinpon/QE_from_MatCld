@@ -1,0 +1,86 @@
+&CONTROL
+calculation = "vc-md"
+nstep = 200
+etot_conv_thr = 1.0d-5
+forc_conv_thr = 1.0d-4
+disk_io = '/dev/null'
+pseudo_dir = '/opt/QEpot/SSSP_efficiency_pseudos/'
+tprnfor = .true.
+tstress = .true.
+verbosity = 'high'
+dt = 20
+/
+&SYSTEM
+ntyp =  2
+occupations = 'smearing' !
+smearing = 'gaussian'
+degauss =   0.035
+ecutrho =   1080
+ecutwfc =   90
+ibrav = 0
+nat = 30
+nosym = .TRUE.
+starting_magnetization(1) =   2.7777777778d-01
+starting_magnetization(2) =   3.8461538462d-01
+nspin = 2
+/
+&ELECTRONS
+conv_thr =   2.d-6
+electron_maxstep = 200
+mixing_beta =   0.2
+mixing_mode = 'plain' !'local-TF'
+mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
+diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
+diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+/
+&IONS
+ion_dynamics = "beeman"
+ion_temperature = "rescaling"
+tempw = 50
+/
+&CELL
+press = 0
+cell_dynamics = "pr"
+press = 0
+cell_dofree = "all"
+/
+K_POINTS {automatic}
+3 5 3 0 0 0
+ATOMIC_SPECIES
+Ni     58.6934 ni_pbe_v1.4.uspp.F.UPF
+V      50.9415 v_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS {angstrom}
+V 5.987704836412 3.435810210548 6.05732968114
+V 2.779368724628 3.435810210548 2.866292660868
+V 1.507901505927 1.158428826856 7.296971187482
+V 7.259172055114 1.158428826856 1.626651154527
+V 2.779368724628 1.125905889452 2.866292660868
+V 5.987704836412 1.125905889452 6.05732968114
+V 7.259172055114 3.403287273144 1.626651154527
+V 1.507901505927 3.403287273144 7.296971187482
+V 7.820228273969 2.28085805 7.999338347493
+V 0.946845287072 2.28085805 0.924283994515
+V 3.399490544607 0 5.417509974848
+V 5.367583016434 0 3.50611236716
+V 4.042466390314 0 7.797101937411
+V 4.724607170727 0 1.126520404597
+V 3.29760203766 2.28085805 0.323476401906
+V 5.469471523381 2.28085805 8.600145940103
+V 1.041663072805 0 4.772300846843
+V 7.725410488236 0 4.151321495165
+Ni 4.38353678052 2.28085805 4.461811171004
+Ni 0 0 0
+Ni 2.072926191976 2.28085805 5.047035888099
+Ni 6.694147369065 2.28085805 3.876586453909
+Ni 6.484402191139 0 8.339088937936
+Ni 2.282671369902 0 0.584533404072
+Ni 3.776606816968 2.28085805 6.75714307891
+Ni 4.990466744073 2.28085805 2.166479263098
+Ni 0.581468112112 0 2.303029246066
+Ni 8.185605448929 0 6.620593095943
+Ni 8.465832022858 2.28085805 5.633464223375
+Ni 0.301241538183 2.28085805 3.290158118633
+CELL_PARAMETERS {angstrom}
+8.830731 0.00 0.00
+0.000000 4.561716 0.00
+-0.063657 0.000000 8.923622

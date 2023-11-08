@@ -1,0 +1,78 @@
+&CONTROL
+calculation = "vc-md"
+nstep = 200
+etot_conv_thr = 1.0d-5
+forc_conv_thr = 1.0d-4
+disk_io = '/dev/null'
+pseudo_dir = '/opt/QEpot/SSSP_efficiency_pseudos/'
+tprnfor = .true.
+tstress = .true.
+verbosity = 'high'
+dt = 20
+/
+&SYSTEM
+ntyp =  3
+occupations = 'smearing' !
+smearing = 'gaussian'
+degauss =   0.035
+ecutrho =   1080
+ecutwfc =   90
+ibrav = 0
+nat = 20
+nosym = .TRUE.
+starting_magnetization(1) =   3.5714285714d-01
+starting_magnetization(2) =   3.1250000000d-01
+starting_magnetization(3) =   3.8461538462d-01
+nspin = 2
+/
+&ELECTRONS
+conv_thr =   2.d-6
+electron_maxstep = 200
+mixing_beta =   0.2
+mixing_mode = 'plain' !'local-TF'
+mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
+diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
+diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+/
+&IONS
+ion_dynamics = "beeman"
+ion_temperature = "rescaling"
+tempw = 600
+/
+&CELL
+press = 0
+cell_dynamics = "pr"
+press = 0
+cell_dofree = "all"
+/
+K_POINTS {automatic}
+8 6 2 0 0 0
+ATOMIC_SPECIES
+Cr     51.9961 cr_pbe_v1.5.uspp.F.UPF
+Fe     55.845 Fe.pbe-spn-kjpaw_psl.0.2.1.UPF
+V      50.9415 v_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS {angstrom}
+V 1.46046 0 14.392389107904
+V 0 0 12.211152600896
+V 1.46046 2.046351 4.153957107904
+V 0 2.046351 1.972720600896
+V 0 0 4.153957107904
+V 1.46046 0 1.972720600896
+V 0 2.046351 14.392389107904
+V 1.46046 2.046351 12.211152600896
+Cr 1.46046 0 18.43214674528
+Cr 0 0 16.465057281984
+Cr 1.46046 2.046351 8.19371474528
+Cr 0 2.046351 6.226625281984
+Cr 0 0 8.19371474528
+Cr 1.46046 0 6.226625281984
+Cr 0 2.046351 18.43214674528
+Cr 1.46046 2.046351 16.465057281984
+Fe 0 0 20.406710263936
+Fe 0 2.046351 10.168278263936
+Fe 1.46046 0 10.168278263936
+Fe 1.46046 2.046351 20.406710263936
+CELL_PARAMETERS {angstrom}
+2.920920 0.00 0.00
+0.000000 4.092702 0.00
+0.000000 0.000000 20.476864

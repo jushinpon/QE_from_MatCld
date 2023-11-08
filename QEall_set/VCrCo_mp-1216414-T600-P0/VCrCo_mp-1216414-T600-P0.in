@@ -1,0 +1,82 @@
+&CONTROL
+calculation = "vc-md"
+nstep = 200
+etot_conv_thr = 1.0d-5
+forc_conv_thr = 1.0d-4
+disk_io = '/dev/null'
+pseudo_dir = '/opt/QEpot/SSSP_efficiency_pseudos/'
+tprnfor = .true.
+tstress = .true.
+verbosity = 'high'
+dt = 20
+/
+&SYSTEM
+ntyp =  3
+occupations = 'smearing' !
+smearing = 'gaussian'
+degauss =   0.035
+ecutrho =   1080
+ecutwfc =   90
+ibrav = 0
+nat = 24
+nosym = .TRUE.
+starting_magnetization(1) =   2.9411764706d-01
+starting_magnetization(2) =   3.5714285714d-01
+starting_magnetization(3) =   3.8461538462d-01
+nspin = 2
+/
+&ELECTRONS
+conv_thr =   2.d-6
+electron_maxstep = 200
+mixing_beta =   0.2
+mixing_mode = 'plain' !'local-TF'
+mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
+diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
+diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+/
+&IONS
+ion_dynamics = "beeman"
+ion_temperature = "rescaling"
+tempw = 600
+/
+&CELL
+press = 0
+cell_dynamics = "pr"
+press = 0
+cell_dofree = "all"
+/
+K_POINTS {automatic}
+5 3 3 0 0 0
+ATOMIC_SPECIES
+Co     58.933195 Co_pbe_v1.2.uspp.F.UPF
+Cr     51.9961 cr_pbe_v1.5.uspp.F.UPF
+V      50.9415 v_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS {angstrom}
+V 2.339132 1.347606603924 5.297170143546
+V 2.339132 6.680275263806 6.268013656254
+V 2.339132 6.680275263806 1.476183343746
+V 2.339132 1.347606603924 2.447026856454
+V 0 5.331449603924 5.297170143546
+V 0 2.696432263806 6.268013656254
+V 0 2.696432263806 1.476183343746
+V 0 5.331449603924 2.447026856454
+Cr 2.339132 5.329553294656 3.8720985
+Cr 1.200674116468 0.689551433341 0
+Cr 3.477589883532 0.689551433341 0
+Cr 2.339132 2.612699851632 0
+Cr 0 1.345710294656 3.8720985
+Cr 3.539806116468 4.673394433341 0
+Cr 1.138457883532 4.673394433341 0
+Cr 0 6.596542851632 0
+Co 2.339132 3.982114012138 5.762743522989
+Co 2.339132 3.982114012138 1.981453477011
+Co 3.488003699196 7.233117140759 3.8720985
+Co 1.190260300804 7.233117140759 3.8720985
+Co 0 7.965957012138 5.762743522989
+Co 0 7.965957012138 1.981453477011
+Co 1.148871699196 3.249274140759 3.8720985
+Co 3.529392300804 3.249274140759 3.8720985
+CELL_PARAMETERS {angstrom}
+4.678264 0.00 0.00
+0.000000 7.967686 0.00
+0.000000 0.000000 7.744197

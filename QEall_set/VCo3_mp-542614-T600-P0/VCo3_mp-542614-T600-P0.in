@@ -1,0 +1,80 @@
+&CONTROL
+calculation = "vc-md"
+nstep = 200
+etot_conv_thr = 1.0d-5
+forc_conv_thr = 1.0d-4
+disk_io = '/dev/null'
+pseudo_dir = '/opt/QEpot/SSSP_efficiency_pseudos/'
+tprnfor = .true.
+tstress = .true.
+verbosity = 'high'
+dt = 20
+/
+&SYSTEM
+ntyp =  2
+occupations = 'smearing' !
+smearing = 'gaussian'
+degauss =   0.035
+ecutrho =   1080
+ecutwfc =   90
+ibrav = 0
+nat = 24
+nosym = .TRUE.
+starting_magnetization(1) =   2.9411764706d-01
+starting_magnetization(2) =   3.8461538462d-01
+nspin = 2
+/
+&ELECTRONS
+conv_thr =   2.d-6
+electron_maxstep = 200
+mixing_beta =   0.2
+mixing_mode = 'plain' !'local-TF'
+mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
+diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
+diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+/
+&IONS
+ion_dynamics = "beeman"
+ion_temperature = "rescaling"
+tempw = 600
+/
+&CELL
+press = 0
+cell_dynamics = "pr"
+press = 0
+cell_dofree = "all"
+/
+K_POINTS {automatic}
+5 5 2 0 0 0
+ATOMIC_SPECIES
+Co     58.933195 Co_pbe_v1.2.uspp.F.UPF
+V      50.9415 v_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS {angstrom}
+V 0 0 9.0086265075
+V 0 0 3.0028755025
+V -2.4621e-08 2.84300131561 1.068736363762
+V -2.4621e-08 2.84300131561 4.937014641238
+V 2.462111374621 1.421500636482 10.942765646238
+V 2.462111374621 1.421500636482 7.074487368762
+Co 1.19666172754 2.152108330871 9.0086265075
+Co -1.196661678297 2.152108330871 9.0086265075
+Co 2.4621e-08 4.224787199797 9.0086265075
+Co 1.26544962246 2.112393621221 3.0028755025
+Co 3.658773028297 2.112393621221 3.0028755025
+Co 2.462111325379 0.039714752295 3.0028755025
+Co -1.234649914391 3.555826761823 11.020994877219
+Co 1.234649963633 3.555826761823 6.996258137781
+Co 2.4621e-08 1.417350337893 6.996258137781
+Co 2.4621e-08 1.417350337893 11.020994877219
+Co 1.234649963633 3.555826761823 11.020994877219
+Co -1.234649914391 3.555826761823 6.996258137781
+Co 3.696761264391 0.708675190269 0.990507132781
+Co 1.227461386367 0.708675190269 5.015243872219
+Co 2.462111325379 2.847151614199 5.015243872219
+Co 2.462111325379 2.847151614199 0.990507132781
+Co 1.227461386367 0.708675190269 0.990507132781
+Co 3.696761264391 0.708675190269 5.015243872219
+CELL_PARAMETERS {angstrom}
+4.924223 0.00 0.00
+-2.462111 4.264502 0.00
+0.000000 0.000000 12.011502
