@@ -8,5 +8,6 @@ test*.pl
 /cif2data
 /data2QE4MatCld
 /QEinByMatCld
+/QEall_set
 /QE_trimmed
 nohup.out
