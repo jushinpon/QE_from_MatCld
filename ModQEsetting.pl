@@ -11,6 +11,7 @@ my $out_folder = "QEall_set";#folder having all subfolders (the same prefixes as
 my @tempw = (50,600);
 my @press = (0);
 my %para =(#you may set QE parameters you want to modify here. Keys should be the same as used in QE
+    #calculation => '"vc-md"',
     cell_dofree => '"all"',
     cell_dynamics => '"pr"',
     #vdw_corr => '"DFT-D3"', #use Van der Waals
@@ -25,8 +26,8 @@ my %para =(#you may set QE parameters you want to modify here. Keys should be th
     mixing_mode => '"plain"',# !'local-TF'
     mixing_ndim => 8,# !set 4 or 3 if OOM-killer exists (out of memory)
     diagonalization => '"david"',#!set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
-    diago_david_ndim => 4
-
+    diago_david_ndim => 4,
+    electron_maxstep => 300
 );
 
 my @keys = keys %para;#get all keys 
