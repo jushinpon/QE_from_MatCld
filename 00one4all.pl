@@ -17,5 +17,8 @@ system("perl data2QE4MatCld.pl");
 print "4. getting corresponding QE input from Materials Cloud into QEinByMatCld\n";
 system("perl QEinputByMatCld.pl");
 
-print "5. final trim for QE input files in QE_trimmed\n";
+print "5. final trim for QE input files using MatCld input and place them in QE_trimmed\n";
 system("perl Final_QEinTrim.pl");
+
+print "6. Modify some QE setting for QE input files and place them in QEall_set\n";
+system("perl ModQEsetting.pl");

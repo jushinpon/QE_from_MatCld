@@ -48,7 +48,7 @@ for my $f (@allQEin){
     #modify some settings first
     for my $k (@keys){
         for my $kl (0..$#QE_template){
-            if($QE_template[$kl] =~ /$k/){
+            if($QE_template[$kl] =~ /^$k/){
                 $QE_template[$kl] = "$k = $para{$k}";
                 last;
             }
