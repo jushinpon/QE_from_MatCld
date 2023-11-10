@@ -186,7 +186,7 @@ for my $id (@datafile){
                 my $y = $3 - $para{ylo};
                 my $z = $4 - $para{zlo};
                 my $temp = join(" ",($ele, $x, $y, $z));
-                print "$temp No Charges\n";
+                #print "$temp No Charges\n";
                 push @{$para{coords}},$temp;
             }
 #1 1 1.000000 4.458517505863 1.201338326940 0.873835074284 with charge
@@ -196,7 +196,7 @@ for my $id (@datafile){
                 my $y = $4 - $para{ylo};
                 my $z = $5 - $para{zlo};
                 my $temp = join(" ",($ele, $x, $y, $z));
-                print "$temp have Charges\n";
+                #print "$temp have Charges\n";
                 push @{$para{coords}},$temp;
             }
         }#one data file
