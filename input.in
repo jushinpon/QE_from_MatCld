@@ -1,0 +1,59 @@
+&CONTROL
+calculation = "vc-md"
+nstep = 300
+etot_conv_thr = 1.0d-5
+forc_conv_thr = 1.0d-4
+disk_io = '/dev/null'
+pseudo_dir = '/opt/QEpot/SSSP_efficiency_pseudos/'
+tprnfor = .true.
+tstress = .true.
+verbosity = 'high'
+dt = 20
+/
+&SYSTEM
+ntyp =  1
+occupations = 'smearing' !
+smearing = 'gaussian'
+degauss =   0.035
+ecutrho =   320
+ecutwfc =   50 
+ibrav = 0
+nat = 4
+nosym = .TRUE.
+!vdw_corr = 'DFT-D3' !you may modify it using ModQEsetting.pl
+starting_magnetization(1) = 0.01
+nspin = 2
+/
+&ELECTRONS
+conv_thr =   2.d-6
+electron_maxstep = 200
+mixing_beta =   0.2
+mixing_mode = 'plain' !'local-TF'
+mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
+diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
+diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+/
+&IONS
+ion_dynamics = "beeman"
+ion_temperature = "rescaling"
+tempw = 1
+/
+&CELL
+!press_conv_thr = 0.1
+cell_dynamics = "pr"
+press = 0
+cell_dofree = "all"
+/
+K_POINTS {automatic}
+2 2 2 0 0 0
+ATOMIC_SPECIES
+S 32.06 s_pbe_v1.4.uspp.F.UPF
+ATOMIC_POSITIONS {angstrom}
+S 0 0 0
+S 2.57855027 0 0
+S 0 2.57855027 0
+S 2.57855027 2.57855027 0
+CELL_PARAMETERS {angstrom}
+5.157101 0.00 0.00
+0.000000 5.157101 0.00
+0.000000 0.000000 2.578550

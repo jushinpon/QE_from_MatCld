@@ -62,8 +62,8 @@ die "No elements were found\n" unless (@myelement);
 my @temperature = ("10");#temperatures for QE_MD, only template for the following sed trim
 my @pressure = ("0");#pressure for vc-md, only template for the following sed trim
 my $calculation = "vc-md";#set temperature and pressure to be 0 0 for scf
-my $stepsize = 50;#20 ~ 0.97 fs
-my $nstep = 200;#how many steps for md for vc-relax
+my $stepsize = 20;#20 ~ 0.97 fs
+my $nstep = 300;#how many steps for md for vc-relax
 my $pseudo_dir = "/opt/QEpot/SSSP_efficiency_pseudos/";
 ####end of setting parameters
 ###get pot setting here!
@@ -179,14 +179,24 @@ for my $id (@datafile){
                 $para{xz} = $2;
                 $para{yz} = $3;
             }
-#1 1 4.458517505863 1.201338326940 0.873835074284
+#1 1 4.458517505863 1.201338326940 0.873835074284 without charge
             elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)$/){
                 my $ele = $ele[$1-1];
                 my $x = $2 - $para{xlo};
                 my $y = $3 - $para{ylo};
                 my $z = $4 - $para{zlo};
                 my $temp = join(" ",($ele, $x, $y, $z));
-                #print "$temp\n";
+                print "$temp No Charges\n";
+                push @{$para{coords}},$temp;
+            }
+#1 1 1.000000 4.458517505863 1.201338326940 0.873835074284 with charge
+            elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)$/ && $2 != ""){
+                my $ele = $ele[$1-1];
+                my $x = $3 - $para{xlo};
+                my $y = $4 - $para{ylo};
+                my $z = $5 - $para{zlo};
+                my $temp = join(" ",($ele, $x, $y, $z));
+                print "$temp have Charges\n";
                 push @{$para{coords}},$temp;
             }
         }#one data file
@@ -256,6 +266,7 @@ ecutwfc =   $cutoff
 ibrav = 0
 nat = $QE_hr->{nat}
 nosym = .TRUE.
+!vdw_corr = 'DFT-D3' !you may modify it using ModQEsetting.pl
 $QE_hr->{starting_magnetization}
 nspin = 2
 /

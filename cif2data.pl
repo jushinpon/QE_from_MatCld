@@ -9,24 +9,32 @@ my $maxNum = 40;#maximum number allowed in cif files
 open(my $DATA, ">cif_summary.txt");
 my $currentPath = getcwd();
 my @ciffiles = `find $currentPath/cifs -name "*.cif"`;
+#my @ciffiles =("/home/jsp/QE_from_MatCld/cifs/Al3(BRu2)2_mp-541849.cif");
 chomp @ciffiles;
 
 `rm -rf cif2data`;
 `mkdir cif2data`;
 
 for my $cif (@ciffiles){
-    my $data_path = `dirname $cif`;
-    my $data_name = `basename $cif`;
+    #modify special characters to modify (() to -)
+    my $tempf = $cif;
+    if($tempf =~ s/\(/-/ or $tempf =~ s/\)/-/){
+        $tempf =~ s/\(/-/;
+        $tempf =~ s/\)/-/;
+        `mv '$cif' '$tempf'`;
+        $cif = $tempf;
+        print "Originl cif has specifial character,like ( or )\n";
+    }
+    my $data_path = `dirname '$cif'`;
+    my $data_name = `basename '$cif'`;
     $data_name =~ s/\.cif//g;
     chomp ($data_path, $data_name);
-
+    
     my $output = "cif2data/$data_name.lmp";
     my $outputdata = "cif2data/$data_name.data";
-
-   # print "$cif: $output\n";
     unlink "$output";
     #system("atomsk $cif -alignx -unskew -wrap $output");
-    system("atomsk $cif -alignx -unskew $output");
+    system("atomsk \"$cif\" -alignx -unskew $output");
     my $atomnum = `grep atoms $output|awk '{print \$1}'`;
     $atomnum =~ s/^\s+|\s+$//g;
     if($atomnum < 4){
