@@ -45,11 +45,24 @@ for my $f (@allQEin){
     my @QE_template =<$in>;
     close $in;
     map { s/^\s+|\s+$//g; } @QE_template;
+
+    # perturb all coordinates with 0.05    
+    for my $c (0 .. $#QE_template){
+        if($QE_template[$c] =~ /(\D{1,2})\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)/
+         and $4 ne "" and $3 ne "" and $2 ne "" and $1 ne ""){
+            my $c1 = sprintf("%.6f",$2 + (2.0*rand() -1.0) * 0.05);
+            my $c2 = sprintf("%.6f",$3 + (2.0*rand() -1.0) * 0.05);
+            my $c3 = sprintf("%.6f",$4 + (2.0*rand() -1.0) * 0.05);
+            $QE_template[$c] = "$1 $c1 $c2 $c3";
+            chomp $QE_template[$c];
+        }
+    }
+
     my @keylines;
     #modify some settings first
     for my $k (@keys){
         for my $kl (0..$#QE_template){
-            if($QE_template[$kl] =~ /^$k/){
+            if($QE_template[$kl] =~ /^\!?$k/){
                 $QE_template[$kl] = "$k = $para{$k}";
                 last;
             }
@@ -67,6 +80,7 @@ for my $f (@allQEin){
                 }
             }#T and P done!
             # make a folder to write into
+
             my $foldname = "$data_name-T$t-P$p";
             `mkdir -p $currentPath/$out_folder/$foldname`;
             my $trimmed = join("\n",@QE_template);
