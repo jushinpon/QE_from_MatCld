@@ -14,12 +14,13 @@ use Parallel::ForkManager;
 use List::Util qw/shuffle/;
 
 my $filefold = "QEall_set";
-my $submitJobs = "yes";
+my $submitJobs = "no";
 my %sbatch_para = (
             nodes => 1,#how many nodes for your lmp job
+            threads => 1,
             cpus_per_task => 1,
             partition => "All",#which partition you want to use
-            runPath => "mpiexec /opt/thermoPW0/bin/pw.x -ndiag 1",          
+            runPath => "mpiexec /opt/thermoPW/bin/pw.x -ndiag 1",          
             );
 
 my $currentPath = getcwd();# dir for all scripts
@@ -27,12 +28,13 @@ my $currentPath = getcwd();# dir for all scripts
 my $forkNo = 1;#although we don't have so many cores, only for submitting jobs into slurm
 my $pm = Parallel::ForkManager->new("$forkNo");
 
-my @all_files = `find $currentPath/$filefold -maxdepth 1 -mindepth 1 -type f -name "*.in" -exec readlink -f {} \\;|sort`;
-map { s/^\s+|\s+$//g; } @alllmpin;
+my @all_files = `find $currentPath/$filefold -maxdepth 2 -mindepth 2 -type f -name "*.in" -exec readlink -f {} \\;|sort`;
+map { s/^\s+|\s+$//g; } @all_files;
 
 my $jobNo = 0;
 
-for my $i (@alllmpin){
+for my $i (@all_files){
+    print "\$i: $i\n";
     my $basename = `basename $i`;
     my $dirname = `dirname $i`;
     $basename =~ s/\.in//g; 
@@ -44,18 +46,18 @@ my $here_doc =<<"END_MESSAGE";
 #SBATCH --output=$basename.sout
 #SBATCH --job-name=$basename
 #SBATCH --nodes=$sbatch_para{nodes}
-#SBATCH --cpus-per-task=$sbatch_para{cpus_per_task}
+##SBATCH --cpus-per-task=$sbatch_para{cpus_per_task}
 #SBATCH --partition=$sbatch_para{partition}
 ##SBATCH --exclude=node23
 
 rm -rf pwscf*
-threads=$sbatch_para{cpus_per_task}
+threads=$sbatch_para{threads}
 export OMP_NUM_THREADS=\$threads
 
 $sbatch_para{runPath} -in $basename.in
 
 END_MESSAGE
-
+    unlink "$dirname/$basename.sh";
     open(FH, "> $dirname/$basename.sh") or die $!;
     print FH $here_doc;
     close(FH);
