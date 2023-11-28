@@ -69,11 +69,20 @@ for my $f (@all_QEin){
         }
         elsif($calculation=~m/scf/ and @mark != 1){
             my @submitted = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID|awk '{print  \$2}'`;
+            my @submitted1 = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID`;
             map { s/^\s+|\s+$//g; } @submitted;
-           
+            map { s/^\s+|\s+$//g; } @submitted1;
+            my %jobname2id;            
+            for my $t (@submitted1){
+                $t =~ m/(\d+)\s+(.+)/;
+                chomp ($1,$2);
+                $jobname2id{$2} = $1;
+            }
             if($jobname ~~ @submitted){
                 $runNu++;
-                print $FH2 "$f\n";
+                my $elapsed = `squeue|grep $jobname2id{$jobname}`;
+                $elapsed =~ s/^\s+|\s+$//g;
+                print $FH2 "$elapsed for scf:\n$f\n";
             }
             else{
                 $deadNu++;
@@ -88,12 +97,22 @@ for my $f (@all_QEin){
         }
         elsif($calculation=~m/md/ and @mark < $nstep){
             my @submitted = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID|awk '{print  \$2}'`;
+            my @submitted1 = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID`;
             map { s/^\s+|\s+$//g; } @submitted;
-            
+            map { s/^\s+|\s+$//g; } @submitted1;
+            my %jobname2id;            
+            for my $t (@submitted1){
+                $t =~ m/(\d+)\s+(.+)/;
+                chomp ($1,$2);
+                $jobname2id{$2} = $1;
+            }
             if($jobname ~~ @submitted){#running
                 $runNu++;
+                my $elapsed = `squeue|grep $jobname2id{$jobname}`;
+                $elapsed =~ s/^\s+|\s+$//g;
+                
                 my $temp = @mark."/".$nstep;
-                print $FH2 "$temp: in $f\n";
+                print $FH2 "**$elapsed\n $temp: in $f\n\n";
             }
             else{
                 $deadNu++;
@@ -144,7 +163,7 @@ else{
     print "\n***The last line (completed jobs/total jobs) of QEjobs_status/Done.txt!\n";
     system("cat QEjobs_status/Done.txt|tail -n 1 ");
 
-    print "\n***Currently running cases:\n";
+    print "\n***Currently running cases (as using squeue):\n";
     system("cat QEjobs_status/Running.txt");
 
 
