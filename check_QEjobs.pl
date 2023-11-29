@@ -60,7 +60,7 @@ for my $f (@all_QEin){
     }
 
     if (-e "$dir/$sout"){#sout exists
-        my @mark = `grep '!' $dir/$sout`;
+        my @mark = `grep '!    total energy' $dir/$sout`;
         map { s/^\s+|\s+$//g; } @mark;
         #scf cases
         if($calculation=~m/scf/ and @mark ==1){
@@ -79,10 +79,16 @@ for my $f (@all_QEin){
                 $jobname2id{$2} = $1;
             }
             if($jobname ~~ @submitted){
-                $runNu++;
                 my $elapsed = `squeue|grep $jobname2id{$jobname}`;
-                $elapsed =~ s/^\s+|\s+$//g;
-                print $FH2 "$elapsed for scf:\n$f\n";
+                if($elapsed){
+                    $runNu++;
+                    $elapsed =~ s/^\s+|\s+$//g;
+                    print $FH2 "$elapsed for scf:\n$f\n";
+                }
+                else{
+                    $deadNu++;
+                    print $FH3 "$f\n";
+                }
             }
             else{
                 $deadNu++;
@@ -107,12 +113,18 @@ for my $f (@all_QEin){
                 $jobname2id{$2} = $1;
             }
             if($jobname ~~ @submitted){#running
-                $runNu++;
                 my $elapsed = `squeue|grep $jobname2id{$jobname}`;
-                $elapsed =~ s/^\s+|\s+$//g;
-                
-                my $temp = @mark."/".$nstep;
-                print $FH2 "**$elapsed\n $temp: in $f\n\n";
+                if($elapsed){
+                    $runNu++;
+                    $elapsed =~ s/^\s+|\s+$//g;                
+                    my $temp = @mark."/".$nstep;
+                    print $FH2 "**$elapsed\n $temp: in $f\n\n";
+                }
+                else{
+                    $deadNu++;
+                    my $temp = @mark."/".$nstep;
+                    print $FH3 "$temp: $f !\n";#for awk    
+                }
             }
             else{
                 $deadNu++;
@@ -155,17 +167,31 @@ close($FH3);
 my @deadcases = `cat QEjobs_status/Dead.txt|grep -v '#'`;
 map { s/^\s+|\s+$//g; } @deadcases;
 if(@deadcases){
-    print "The dead cases are:\n";
+    print "\n############\n";
+    print "!!!!!The dead cases are:\n";
     system("cat QEjobs_status/Dead.txt");
+    print "############\n\n";
+
 }
 else{
-    print "\n!!!!!No jobs are dead so far!\n";
-    print "\n***The last line (completed jobs/total jobs) of QEjobs_status/Done.txt!\n";
-    system("cat QEjobs_status/Done.txt|tail -n 1 ");
-
-    print "\n***Currently running cases (as using squeue):\n";
-    system("cat QEjobs_status/Running.txt");
-
-
+    print "\n!!!!!No jobs are dead so far!\n\n";
 }
+
+my @runningcases = `cat QEjobs_status/Running.txt|grep -v '#'`;
+map { s/^\s+|\s+$//g; } @runningcases;
+if(@runningcases){
+    print "\n++++++++++++\n";
+    print "The running cases are:\n";
+    system("cat QEjobs_status/Running.txt");
+    print "++++++++++++\n";
+}
+else{
+    print "\n!!!!!No jobs are running currently!\n\n";
+}
+
+print "\n";
+print "***The last line (completed jobs/total jobs) of QEjobs_status/Done.txt!\n";
+system("cat QEjobs_status/Done.txt|tail -n 1 ");
+print "+++++Check End+++++++\n";
+
 

@@ -55,6 +55,7 @@ threads=$sbatch_para{threads}
 export OMP_NUM_THREADS=\$threads
 
 $sbatch_para{runPath} -in $basename.in
+rm -rf pwscf*
 
 END_MESSAGE
     unlink "$dirname/$basename.sh";
