@@ -11,5 +11,5 @@ test*.pl
 /QEall_set
 /QE_trimmed
 /QEjobs_status
-/*
+**/
 nohup.out
