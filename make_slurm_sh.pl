@@ -31,10 +31,10 @@ my $pm = Parallel::ForkManager->new("$forkNo");
 my @all_files = `find $currentPath/$filefold -maxdepth 2 -mindepth 2 -type f -name "*.in" -exec readlink -f {} \\;|sort`;
 map { s/^\s+|\s+$//g; } @all_files;
 
-my $jobNo = 0;
+my $jobNo = 1;
 
 for my $i (@all_files){
-    print "\$i: $i\n";
+    print "Job Number $jobNo: $i\n";
     my $basename = `basename $i`;
     my $dirname = `dirname $i`;
     $basename =~ s/\.in//g; 
@@ -48,6 +48,7 @@ my $here_doc =<<"END_MESSAGE";
 #SBATCH --nodes=$sbatch_para{nodes}
 ##SBATCH --cpus-per-task=$sbatch_para{cpus_per_task}
 #SBATCH --partition=$sbatch_para{partition}
+##SBATCH --ntasks-per-node=12
 ##SBATCH --exclude=node23
 
 rm -rf pwscf*

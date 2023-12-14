@@ -2,7 +2,10 @@ use strict;
 use warnings;
 use Cwd;
 #print "@running\n";
-my $source_folder = "/home/jsp/QE_from_MatCld/QEall_set";#all cases you want to work on
+my $whoami = `whoami`;#get username first
+$whoami =~ s/^\s+|\s+$//g;
+my $currentPath = getcwd();# dir for all scripts
+my $source_folder = "$currentPath/QEall_set";#all cases you want to work on
 my @all_QEin = `find $source_folder -type f -name "*.in"`;#keep element info`;
 map { s/^\s+|\s+$//g; } @all_QEin;
 
@@ -68,27 +71,31 @@ for my $f (@all_QEin){
             print $FH "$f\n";
         }
         elsif($calculation=~m/scf/ and @mark != 1){
-            my @submitted = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID|awk '{print  \$2}'`;
-            my @submitted1 = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID`;
+            #squeue -o "%A %j %u %N %T %M"
+            #398520 jobLi7Al6_mp-1212183-T300-P0 shaohan  PENDING 0:00
+            #398523 jobS_mp-77-T50-P0 shaohan node[10,18] RUNNING 1-04:52:12
+            my @submitted = `squeue -u $whoami -o "%A %j %u %N %T %M"|awk '{print  \$2}'`;#jobnames
+            my @submitted1 = `squeue -u $whoami -o "%A %j %u %N %T %M"|awk '{print  \$1}'`;#jobid
             map { s/^\s+|\s+$//g; } @submitted;
             map { s/^\s+|\s+$//g; } @submitted1;
-            my %jobname2id;            
-            for my $t (@submitted1){
-                $t =~ m/(\d+)\s+(.+)/;
-                chomp ($1,$2);
-                $jobname2id{$2} = $1;
-            }
+            my %jobname2id;
+            @jobname2id{@submitted} = @submitted1;            
+            #for my $t (@submitted1){
+            #    $t =~ m/(\d+)\s+(.+)/;
+            #    chomp ($1,$2);
+            #    $jobname2id{$2} = $1;
+            #}
             if($jobname ~~ @submitted){
                 my $elapsed = `squeue|grep $jobname2id{$jobname}`;
-                if($elapsed){
+                $elapsed =~ s/^\s+|\s+$//g;
+               # if($elapsed){
                     $runNu++;
-                    $elapsed =~ s/^\s+|\s+$//g;
                     print $FH2 "$elapsed for scf:\n$f\n";
-                }
-                else{
-                    $deadNu++;
-                    print $FH3 "$f\n";
-                }
+               # }
+               # else{
+               #     $deadNu++;
+               #     print $FH3 "$f\n";
+               # }
             }
             else{
                 $deadNu++;
@@ -102,29 +109,29 @@ for my $f (@all_QEin){
             print $FH "$f\n";
         }
         elsif($calculation=~m/md/ and @mark < $nstep){
-            my @submitted = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID|awk '{print  \$2}'`;
-            my @submitted1 = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID`;
+            #squeue -o "%A %j %u %N %T %M"
+            #398520 jobLi7Al6_mp-1212183-T300-P0 shaohan  PENDING 0:00
+            #398523 jobS_mp-77-T50-P0 shaohan node[10,18] RUNNING 1-04:52:12
+            my @submitted = `squeue -u $whoami -o "%A %j %u %N %T %M"|awk '{print  \$2}'`;#jobnames
+            my @submitted1 = `squeue -u $whoami -o "%A %j %u %N %T %M"|awk '{print  \$1}'`;#jobid
             map { s/^\s+|\s+$//g; } @submitted;
             map { s/^\s+|\s+$//g; } @submitted1;
-            my %jobname2id;            
-            for my $t (@submitted1){
-                $t =~ m/(\d+)\s+(.+)/;
-                chomp ($1,$2);
-                $jobname2id{$2} = $1;
-            }
+            my %jobname2id;
+            @jobname2id{@submitted} = @submitted1;
+
             if($jobname ~~ @submitted){#running
                 my $elapsed = `squeue|grep $jobname2id{$jobname}`;
-                if($elapsed){
-                    $runNu++;
+                #if($elapsed){
                     $elapsed =~ s/^\s+|\s+$//g;                
+                    $runNu++;
                     my $temp = @mark."/".$nstep;
                     print $FH2 "**$elapsed\n $temp: in $f\n\n";
-                }
-                else{
-                    $deadNu++;
-                    my $temp = @mark."/".$nstep;
-                    print $FH3 "$temp: $f !\n";#for awk    
-                }
+                #}
+                #else{
+                #    $deadNu++;
+                #    my $temp = @mark."/".$nstep;
+                #    print $FH3 "$temp: $f !\n";#for awk    
+                #}
             }
             else{
                 $deadNu++;
@@ -134,9 +141,8 @@ for my $f (@all_QEin){
         }
     }
     else{#no sout exists, in queue
-        my @submitted = `sacct --format="JobID,JobName%30"|grep -v batch|grep -v extern|grep -v proxy|grep -v -- '--'|grep -v JobID|awk '{print  \$2}'`;
-        map { s/^\s+|\s+$//g; } @submitted;
-        
+         my @submitted = `squeue -u $whoami -o "%A %j %u %N %T %M"|awk '{print  \$2}'`;#jobnames
+            map { s/^\s+|\s+$//g; } @submitted;
         if($jobname ~~ @submitted){#queneing
             $queNu++;
             print $FH1 "$f\n";

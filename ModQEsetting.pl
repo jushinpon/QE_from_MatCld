@@ -7,6 +7,7 @@ my $QE_folder = "QE_trimmed";#folder where you place all your QE input files
 my $out_folder = "QEall_set";#folder having all subfolders (the same prefixes as QE input file) with the QE input
 `rm -rf $currentPath/$out_folder`;
 `mkdir $currentPath/$out_folder`;
+die;
 ## set Temperature and press 
 my @tempw = (50,600);
 my @press = (0);

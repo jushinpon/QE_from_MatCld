@@ -38,9 +38,10 @@ print ", you need to modify heredoc for setting the largest ecutrho and ecutwfc 
 print "\nMaybe you also need to modify cell_dofree setting for your QE cases. \n\n";
 ###parameters to set first
 my $currentPath = getcwd();
+my $dir = "$currentPath/den_mod";
 #my @myelement =  ("B","N");#corresponding to lmp type ids
-my @datafile = `find $currentPath/cif2data -name "*.data"`;#find all data files
-chomp @datafile;
+my @datafile = `find $dir -name "*.data"`;#find all data files
+map { s/^\s+|\s+$//g; } @datafile;
 die "No data files\n" unless(@datafile);
 #collect all elements in data files
 my %myelement;#get all ements from all data files
@@ -62,8 +63,8 @@ die "No elements were found\n" unless (@myelement);
 my @temperature = ("10");#temperatures for QE_MD, only template for the following sed trim
 my @pressure = ("0");#pressure for vc-md, only template for the following sed trim
 my $calculation = "vc-md";#set temperature and pressure to be 0 0 for scf
-my $stepsize = 20;#20 ~ 0.97 fs
-my $nstep = 300;#how many steps for md for vc-relax
+my $stepsize = 50;#20 ~ 0.97 fs
+my $nstep = 50;#how many steps for md for vc-relax
 my $pseudo_dir = "/opt/QEpot/SSSP_efficiency_pseudos/";
 ####end of setting parameters
 ###get pot setting here!
@@ -115,13 +116,29 @@ for my $id (@datafile){
     #get required data first
     my %current_elements;#get all ements of a data file
     my $typeNum = `grep "atom types" $id|awk '{print \$1}'`;
-    chomp  $typeNum;
+    $typeNum =~ s/^\s+|\s+$//g;#could no specific type in coords info
     my @ele = `grep -v '^[[:space:]]*\$' $id|grep -A $typeNum Masses|grep -v Masses|grep -v -- '--'|awk '{print \$NF}'`;
-    #my @ele = `grep -v '^[[:space:]]*\$' $_|grep -A $typeNum Masses|grep -v Masses|grep -v -- '--'|awk '{print \$NF}'`;
     map { s/^\s+|\s+$//g; } @ele;
     die "No Masses for finding element symbol in $_\n" unless(@ele);
+    
+    #filter the types no in Masses to skip this type in QE input
+    my $atomNum = `grep "atoms" $id|awk '{print \$1}'`;
+    $atomNum =~ s/^\s+|\s+$//g;#could no specific type in coords info
+    my @usedType = `grep -v '^[[:space:]]*\$' $id|grep -A $atomNum Atoms|grep -v Atoms|grep -v -- '--'|awk '{print \$2}'`;#get types
+    map { s/^\s+|\s+$//g; } @usedType;
+    die "No type info in $_\n" unless(@usedType);
+    my %usedType;
+    @usedType{@usedType} = 1;   
+    my $current_typeNu = keys %usedType;
+    chomp $current_typeNu;
     @current_elements{@ele} = 1;
-    my @current_elements = keys  %current_elements;
+
+    my @current_elements;
+    for my $t (sort keys %usedType){
+        push @current_elements,$ele[$t - 1];
+    }
+
+    #my @current_elements = keys  %current_elements;
     my $species = "";
     my $starting_magnetization = "";
     my $counter = 0;
@@ -222,7 +239,7 @@ for my $id (@datafile){
             coord => $coords,
             temp => 1.0,
             press => 0.0,
-            ntyp => $typeNum,
+            ntyp => $current_typeNu,
             dt => $stepsize, ###timestep size,
             nat => $para{natom},
             nstep => $nstep,

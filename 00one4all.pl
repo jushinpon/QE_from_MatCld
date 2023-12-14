@@ -22,3 +22,9 @@ system("perl Final_QEinTrim.pl");
 
 print "6. Modify some QE setting for QE input files and place them in QEall_set\n";
 system("perl ModQEsetting.pl");
+
+#print "7. make sbatch file in each subfolder of QEall_set\n";
+#system("perl make_slurm_sh.pl");
+#
+#print "8. submit the job in each subfolder of QEall_set\n";
+#system("perl submit_allslurm_sh.pl");
