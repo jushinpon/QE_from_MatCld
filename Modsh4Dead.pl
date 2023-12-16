@@ -1,35 +1,19 @@
-=b
-make lmp input files for all strucutres in labelled folders.
-You need to use this script in the dir with all dpgen collections (in all_cfgs folder)
-perl ../tool_scripts/cfg2lmpinput.pl 
-=cut
 use warnings;
 use strict;
-use JSON::PP;
-use Data::Dumper;
-use List::Util qw(min max);
 use Cwd;
-use POSIX;
-use Parallel::ForkManager;
-use List::Util qw/shuffle/;
 
-my $filefold = "QEall_set";
+my $currentPath = getcwd();# dir for all scripts
+my @all_files = `grep -v '^[[:space:]]*\$' $currentPath/QEjobs_status/Dead.txt| grep -v '#'|awk '{print \$2}'`;#all dead QE cases
+map { s/^\s+|\s+$//g; } @all_files;
+die "No Dead.txt in $currentPath/QEjobs_status" unless(@all_files);
 my $submitJobs = "no";
 my %sbatch_para = (
             nodes => 1,#how many nodes for your lmp job
-            threads => 1,
-            cpus_per_task => 1,
+            threads => 2,#modify it to 2, 4, 6 if oom problem appears
+            cpus_per_task => 1,#useless if use "mpiexec -np"
             partition => "All",#which partition you want to use
             runPath => "/opt/thermoPW/bin/pw.x -ndiag 1",          
             );
-
-my $currentPath = getcwd();# dir for all scripts
-
-my $forkNo = 1;#although we don't have so many cores, only for submitting jobs into slurm
-my $pm = Parallel::ForkManager->new("$forkNo");
-
-my @all_files = `find $currentPath/$filefold -maxdepth 2 -mindepth 2 -type f -name "*.in" -exec readlink -f {} \\;|sort`;
-map { s/^\s+|\s+$//g; } @all_files;
 
 my $jobNo = 1;
 
@@ -71,4 +55,3 @@ END_MESSAGE
         chdir($currentPath);
     }    
 }#  
-
