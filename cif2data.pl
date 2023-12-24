@@ -7,6 +7,7 @@ use POSIX;
 unlink "cif_summary.txt";
 my $maxNum = 64;#maximum number allowed in cif files
 open(my $DATA, ">cif_summary.txt");
+open(my $DATA_orth, ">cif_summary_orth.txt");
 my $currentPath = getcwd();
 my @ciffiles = `find $currentPath/cifs -name "*.cif"`;
 #my @ciffiles =("/home/jsp/QE_from_MatCld/cifs/Al3(BRu2)2_mp-541849.cif");
@@ -31,6 +32,7 @@ for my $cif (@ciffiles){
     chomp ($data_path, $data_name);
     
     my $output = "cif2data/$data_name.lmp";
+    my $output_orth = "cif2data/$data_name-orth.lmp";
     my $outputdata = "cif2data/$data_name.data";
     unlink "$output";
     #system("atomsk $cif -alignx -unskew -wrap $output");
@@ -53,20 +55,32 @@ for my $cif (@ciffiles){
         unlink "$output";     
         next;
     }
-    my @temp = `cat $output`;
-    map { s/^\s+|\s+$//g; } @temp;
-    my $temp = join("\n",@temp);
-    chomp $temp;
-    unlink "$output";
-    unlink "$outputdata";
-    open(my $DATA1, ">$outputdata");
-    print $DATA1 "$temp\n";
-  
-    close($DATA1);   
+    `atomsk $output -orthogonal-cell $output_orth`;
+    my $newatomnu = `grep atoms $output_orth`;
+    $newatomnu =~ s/^\s+|\s+$//g;
+    if($newatomnu <= $maxNum ){
+        print $DATA_orth "!!!!atom number of $newatomnu for $outputdata\n";        
+        
+        my @temp = `cat $output_orth`;
+        map { s/^\s+|\s+$//g; } @temp;
+        my $temp = join("\n",@temp);
+        chomp $temp;
+        unlink "$output";
+        unlink "$output_orth";
+        unlink "$outputdata";
+        open(my $DATA1, ">$outputdata");
+        print $DATA1 "$temp\n";
+        close($DATA1); 
+    }
+    else{
+        unlink "$output_orth";
+        unlink "$output";
+    }  
 }
 
 close($DATA);
-print "\n***Pleae check cif_summary.txt or the following content of cif_summary.txt:\n";
-print "\n***printing cif_summary.txt!!!\n";
-system("cat ./cif_summary.txt");
+close($DATA_orth);
+print "\n***Pleae check cif_summary_orth.txt or the following content of cif_summary.txt:\n";
+print "\n***printing cif_summary_orth.txt!!!\n";
+system("cat ./cif_summary_orth.txt");
 #print "\n\n*** If the above is empty, no cif is skipped or using supercell for data file.\n";

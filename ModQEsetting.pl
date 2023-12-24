@@ -27,7 +27,7 @@ my %para =(#you may set QE parameters you want to modify here. Keys should be th
     mixing_mode => '"plain"',# !'local-TF'
     mixing_ndim => 8,# !set 4 or 3 if OOM-killer exists (out of memory)
     diagonalization => '"david"',#!set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
-    diago_david_ndim => 4,
+    diago_david_ndim => 2,
     electron_maxstep => 300
 );
 
