@@ -37,14 +37,21 @@ for my $cif (@ciffiles){
     system("atomsk \"$cif\" -alignx -unskew $output");
     my $atomnum = `grep atoms $output|awk '{print \$1}'`;
     $atomnum =~ s/^\s+|\s+$//g;
-    if($atomnum < 4){
-        print $DATA "***atom number of $cif (current $atomnum) < 4, using 2 2 1 supercell\n";
+    print "$atomnum , $maxNum, $cif\n";
+    if($atomnum <= 4){
+        print $DATA "atom number of $cif (current $atomnum) <= 4, using 2 2 1 supercell\n";
         unlink "$output";
         system("atomsk $cif -alignx -unskew -duplicate 2 2 1 $output");
-    }elsif($atomnum >= $maxNum){
-        print $DATA "***atom number of $cif (current $atomnum) >= $maxNum, not use this cif\n";
-        unlink "$output";        
+    }elsif($atomnum > 4 and $atomnum <= $maxNum){
+        print $DATA "***atom number of $cif (current $atomnum) <= $maxNum and > 4,no supercell is used.\n";
+        unlink "$output";         
         system("atomsk $cif -alignx -unskew  $output");
+    }
+    else{
+        print $DATA "!!!!atom number of $cif (current $atomnum) >= $maxNum, not use this cif\n";        
+        print "$atomnum , $maxNum, $cif\n";
+        unlink "$output";     
+        next;
     }
     my @temp = `cat $output`;
     map { s/^\s+|\s+$//g; } @temp;
@@ -54,11 +61,12 @@ for my $cif (@ciffiles){
     unlink "$outputdata";
     open(my $DATA1, ">$outputdata");
     print $DATA1 "$temp\n";
-    close($DATA);
+  
     close($DATA1);   
 }
 
+close($DATA);
 print "\n***Pleae check cif_summary.txt or the following content of cif_summary.txt:\n";
 print "\n***printing cif_summary.txt!!!\n";
 system("cat ./cif_summary.txt");
-print "\n\n*** If the above is empty, no cif is skipped or using supercell for data file.\n";
+#print "\n\n*** If the above is empty, no cif is skipped or using supercell for data file.\n";

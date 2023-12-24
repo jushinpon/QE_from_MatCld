@@ -4,7 +4,7 @@ from mp_api.client import MPRester
 import os
 import itertools
 
-elements = ["Te", "Sn", "Pb"]
+elements = ["Sn"]
 formulas = []
 
 # 生成所有可能的化學式
