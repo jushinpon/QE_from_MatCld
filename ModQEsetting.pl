@@ -7,7 +7,7 @@ my $QE_folder = "QE_trimmed";#folder where you place all your QE input files
 my $out_folder = "QEall_set";#folder having all subfolders (the same prefixes as QE input file) with the QE input
 `rm -rf $currentPath/$out_folder`;
 `mkdir $currentPath/$out_folder`;
-die;
+
 ## set Temperature and press 
 my @tempw = (50,600);
 my @press = (0);
@@ -19,7 +19,7 @@ my %para =(#you may set QE parameters you want to modify here. Keys should be th
     dt => 20,
     etot_conv_thr => "1.0d-5",#perl not know d-5, make it a string 
     forc_conv_thr => "1.0d-4",
-    disk_io => '"/dev/null"',
+    disk_io => '"none"',
     degauss =>   0.035,
     smearing => '"gaussian"',
     conv_thr =>   "2.d-6",

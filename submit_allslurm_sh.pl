@@ -30,7 +30,7 @@ for my $i (@all_files){
     chdir($dirname);
     my $prefix = `basename $i`;
     $prefix =~ s/^\s+|\s+$//g;
-    $prefix =~ s/\.in//g;
+    $prefix =~ s/\.sh//g;
     unlink "$prefix.sout";
     `sbatch $prefix.sh`;
 }#  

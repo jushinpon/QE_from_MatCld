@@ -17,10 +17,12 @@ my $filefold = "QEall_set";
 my $submitJobs = "no";
 my %sbatch_para = (
             nodes => 1,#how many nodes for your lmp job
-            threads => 1,
-            cpus_per_task => 1,
+            #nodes => 1,#how many nodes for your lmp job
+            threads => 1,,#modify it to 2, 4 if oom problem appears
+            #cpus_per_task => 1,
             partition => "All",#which partition you want to use
-            runPath => "/opt/thermoPW/bin/pw.x -ndiag 1",          
+            #partition => "All",#which partition you want to use
+            runPath => "/opt/thermoPW-7-2/bin/pw.x",          
             );
 
 my $currentPath = getcwd();# dir for all scripts
@@ -46,17 +48,21 @@ my $here_doc =<<"END_MESSAGE";
 #SBATCH --output=$basename.sout
 #SBATCH --job-name=$basename
 #SBATCH --nodes=$sbatch_para{nodes}
-##SBATCH --cpus-per-task=$sbatch_para{cpus_per_task}
+#SBATCH --cpus-per-task=$sbatch_para{threads}
 #SBATCH --partition=$sbatch_para{partition}
 ##SBATCH --ntasks-per-node=12
 ##SBATCH --exclude=node23
 
 rm -rf pwscf*
+node=$sbatch_para{nodes}
 threads=$sbatch_para{threads}
 processors=\$(nproc)
-np=\$((\$processors/\$threads))
-export OMP_NUM_THREADS=\$threads
+np=\$((\$node*\$processors/\$threads))
 
+export OMP_NUM_THREADS=\$threads
+#the following two are for AMD CPU if slurm chooses for you!!
+export MKL_DEBUG_CPU_TYPE=5
+export MKL_CBWR=AUTO
 mpiexec -np \$np $sbatch_para{runPath} -in $basename.in
 rm -rf pwscf*
 

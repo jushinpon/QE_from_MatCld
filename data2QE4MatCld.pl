@@ -38,9 +38,9 @@ print ", you need to modify heredoc for setting the largest ecutrho and ecutwfc 
 print "\nMaybe you also need to modify cell_dofree setting for your QE cases. \n\n";
 ###parameters to set first
 my $currentPath = getcwd();
-my $dir = "$currentPath/den_mod";
+my $dir = "$currentPath/cif2data";
 #my @myelement =  ("B","N");#corresponding to lmp type ids
-my @datafile = `find $dir -name "*.data"`;#find all data files
+my @datafile = `find $dir -name "*.data"|grep -v "/Te_"`;#find all data files
 map { s/^\s+|\s+$//g; } @datafile;
 die "No data files\n" unless(@datafile);
 #collect all elements in data files
@@ -63,7 +63,7 @@ die "No elements were found\n" unless (@myelement);
 my @temperature = ("10");#temperatures for QE_MD, only template for the following sed trim
 my @pressure = ("0");#pressure for vc-md, only template for the following sed trim
 my $calculation = "vc-md";#set temperature and pressure to be 0 0 for scf
-my $stepsize = 50;#20 ~ 0.97 fs
+my $stepsize = 20;#20 ~ 0.97 fs
 my $nstep = 50;#how many steps for md for vc-relax
 my $pseudo_dir = "/opt/QEpot/SSSP_efficiency_pseudos/";
 ####end of setting parameters
@@ -266,7 +266,7 @@ calculation = "$QE_hr->{calculation}"
 nstep = $QE_hr->{nstep}
 etot_conv_thr = 1.0d-5
 forc_conv_thr = 1.0d-4
-disk_io = '/dev/null'
+disk_io = 'none'
 pseudo_dir = '$QE_hr->{pseudo_dir}'
 tprnfor = .true.
 tstress = .true.
