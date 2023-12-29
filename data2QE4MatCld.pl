@@ -124,7 +124,7 @@ for my $id (@datafile){
     #filter the types no in Masses to skip this type in QE input
     my $atomNum = `grep "atoms" $id|awk '{print \$1}'`;
     $atomNum =~ s/^\s+|\s+$//g;#could no specific type in coords info
-    my @usedType = `grep -v '^[[:space:]]*\$' $id|grep -A $atomNum Atoms|grep -v Atoms|grep -v -- '--'|awk '{print \$2}'`;#get types
+    my @usedType = `grep -v '^[[:space:]]*\$' $id|grep -v Atomsk|grep -A $atomNum Atoms|grep -v Atoms|grep -v -- '--'|awk '{print \$2}'`;#get types
     map { s/^\s+|\s+$//g; } @usedType;
     die "No type info in $_\n" unless(@usedType);
     my %usedType;
