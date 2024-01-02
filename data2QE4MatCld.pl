@@ -40,7 +40,7 @@ print "\nMaybe you also need to modify cell_dofree setting for your QE cases. \n
 my $currentPath = getcwd();
 my $dir = "$currentPath/cif2data";
 #my @myelement =  ("B","N");#corresponding to lmp type ids
-my @datafile = `find $dir -name "*.data"|grep -v "/Te_"`;#find all data files
+my @datafile = `find $dir -name "*.data"`;#|grep -v "/Te_"`;#find all data files
 map { s/^\s+|\s+$//g; } @datafile;
 die "No data files\n" unless(@datafile);
 #collect all elements in data files
@@ -156,9 +156,10 @@ for my $id (@datafile){
     my $data_name = `basename $id`;
     $data_name =~ s/\.data//g;
     chomp ($data_path, $data_name);
-        open my $database ,"< $id";      
-        my @data =<$database>;
-        close $database;
+    open my $database ,"< $id";      
+    my @data =<$database>;
+    map { s/^\s+|\s+$//g; } @data;
+    close $database;
         my %para = (
             xy => "0.0",#if no value
             xz => "0.0",
@@ -191,10 +192,12 @@ for my $id (@datafile){
                 $para{zlo} = $1;
                 $para{zhi} = $2;
             }
-            elsif(/([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+xy\s+xz\s+yz/){
+            elsif(/([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+xy\s+xz\s+yz/){
                 $para{xy} = $1;
                 $para{xz} = $2;
                 $para{yz} = $3;
+                #print "$1,$2,$3\n";
+                #die;
             }
 #1 1 4.458517505863 1.201338326940 0.873835074284 without charge
             elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)$/){
