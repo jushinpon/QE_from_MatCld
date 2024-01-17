@@ -32,6 +32,7 @@ use POSIX;
 use Parallel::ForkManager;
 use lib './';#assign pm dir
 use elements;#all setting package
+use Math::BigFloat;
 
 print "\n\n***IMPORTANT!!! If all your data files do not include all elements you want to use\n";
 print ", you need to modify heredoc for setting the largest ecutrho and ecutwfc of your element. \n";
@@ -203,9 +204,9 @@ for my $id (@datafile){
             elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)$/){
             #elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*)$/){
                 my $ele = $ele[$1-1];
-                my $x = $2 - $para{xlo};
-                my $y = $3 - $para{ylo};
-                my $z = $4 - $para{zlo};
+                my $x = Math::BigFloat->new($2) - $para{xlo};                
+                my $y = Math::BigFloat->new($3) - $para{ylo};
+                my $z = Math::BigFloat->new($4) - $para{zlo};
                 my $temp = join(" ",($ele, $x, $y, $z));
                 #print "$temp No Charges\n";
                 push @{$para{coords}},$temp;
@@ -213,9 +214,9 @@ for my $id (@datafile){
 #1 1 1.000000 4.458517505863 1.201338326940 0.873835074284 with charge
             elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)$/ && $2 != ""){
                 my $ele = $ele[$1-1];
-                my $x = $3 - $para{xlo};
-                my $y = $4 - $para{ylo};
-                my $z = $5 - $para{zlo};
+                my $x = Math::BigFloat->new($3) - $para{xlo};
+                my $y = Math::BigFloat->new($4) - $para{ylo};
+                my $z = Math::BigFloat->new($5) - $para{zlo};
                 my $temp = join(" ",($ele, $x, $y, $z));
                 #print "$temp have Charges\n";
                 push @{$para{coords}},$temp;
