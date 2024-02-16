@@ -9,7 +9,7 @@ print "1. getting all cif files from materials project into cifs \n";
 system("python mp_get_cif.py");
 
 print "2. converting all cif files to data files into cif2data \n";
-system("perl cif2data.pl");
+system("perl cif2dataOvito.pl");
 
 print "3. converting all data files to QE input into data2QE4MatCld\n";
 system("perl data2QE4MatCld.pl");
