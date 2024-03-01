@@ -1,3 +1,10 @@
+=b
+1. check_QEjobs.pl: check all your job status under a specific folder (!!!!!need to modify it for your case) and place check results into QEjobs_status.  
+2. find_data4relax.pl: find the data files in all data_files folders under a specific folder (!!!!!need to modify it for your case) and move it to folder, data4relax.
+3. ModQEin4Dead.pl: modify QE input setting for dead cases recorded by Dead.txt in QEjobs_status folder. 
+=cut
+
+
 use strict;
 use warnings;
 print "You need to modify the element set in mp_get_cif.py for yourown system\n";

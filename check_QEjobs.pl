@@ -5,7 +5,8 @@ use Cwd;
 my $whoami = `whoami`;#get username first
 $whoami =~ s/^\s+|\s+$//g;
 my $currentPath = getcwd();# dir for all scripts
-my $source_folder = "$currentPath/QEall_set";#all cases you want to work on
+my $source_folder = "$currentPath/QE_trimmed4relax";#all cases you want to work on
+#my $source_folder = "$currentPath/QEall_set";#all cases you want to work on
 my @all_QEin = `find $source_folder -type f -name "*.in"`;#keep element info`;
 map { s/^\s+|\s+$//g; } @all_QEin;
 
@@ -104,11 +105,11 @@ for my $f (@all_QEin){
         }
 
         #md cases
-        if($calculation=~m/md/ and @mark == $nstep){
+        if($calculation=~m/(md|relax)/ and @mark == $nstep){
             $doneNu++;
             print $FH "$f\n";
         }
-        elsif($calculation=~m/md/ and @mark < $nstep){
+        elsif($calculation=~m/(md|relax)/ and @mark < $nstep){
             #squeue -o "%A %j %u %N %T %M"
             #398520 jobLi7Al6_mp-1212183-T300-P0 shaohan  PENDING 0:00
             #398523 jobS_mp-77-T50-P0 shaohan node[10,18] RUNNING 1-04:52:12
@@ -149,7 +150,7 @@ for my $f (@all_QEin){
         }
         else{
             $deadNu++;
-            print $FH3 "$f not submitted!\n";#for awk
+            print $FH3 "0/0: $f not submitted!\n";#for awk
         }
     }
 

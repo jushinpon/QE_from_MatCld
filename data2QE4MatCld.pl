@@ -63,9 +63,9 @@ map { s/^\s+|\s+$//g; } @myelement;
 die "No elements were found\n" unless (@myelement);
 my @temperature = ("10");#temperatures for QE_MD, only template for the following sed trim
 my @pressure = ("0");#pressure for vc-md, only template for the following sed trim
-my $calculation = "vc-md";#set temperature and pressure to be 0 0 for scf
+my $calculation = "vc-relax";#set temperature and pressure to be 0 0 for scf
 my $stepsize = 20;#20 ~ 0.97 fs
-my $nstep = 50;#how many steps for md for vc-relax
+my $nstep = 50;#how many steps for md for vc-relax or vc-md
 my $pseudo_dir = "/opt/QEpot/SSSP_efficiency_pseudos/";
 ####end of setting parameters
 ###get pot setting here!
