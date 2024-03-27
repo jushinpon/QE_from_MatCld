@@ -26,15 +26,28 @@ for my $qe (@QEin_MC){
     map { s/^\s+|\s+$//g; } @magnet;
     my $ntype = @magnet;
     my @pot = `grep -v '^[[:space:]]*\$' $qe|grep -A $ntype ATOMIC_SPECIES|grep -v ATOMIC_SPECIES|grep -v -- '--'`;
-    map { s/^\s+|\s+$//g; } @pot;
+    map { s/^\s+|\s+$//g; } @pot;#need change $NF by the original QE input
+    
+    my $QEin_name = `basename $qe`;
+    $QEin_name =~ s/^\s+|\s+$//g;
+    my @pot_template = `grep -v '^[[:space:]]*\$' data2QE4MatCld/$QEin_name|grep -A $ntype ATOMIC_SPECIES|grep -v ATOMIC_SPECIES|grep -v -- '--'`;
+    map { s/^\s+|\s+$//g; } @pot_template;#need change $NF by the original QE input
+    my %ele_pot;
+    for my $i (@pot_template){
+        my @temp = split(/\s+/,$i);
+        $ele_pot{$temp[0]} = "$temp[1] $temp[2]";
+    }
+   # for (keys %ele_pot){
+   #     print "$_: $ele_pot{$_}\n";
+   # }
+   # die;
     my $kpoint = `grep -v '^[[:space:]]*\$' $qe|grep -A 1 K_POINTS|grep -v K_POINTS`;
     $kpoint =~ s/^\s+|\s+$//g;
-    print "$counter: $qe\n";
-    print "@magnet\n";
-    print "@pot\n";
-    print "$kpoint\n\n";
-    #read the corresponding template
-    my $QEin_name = `basename $qe`;
+    #print "$counter: $qe\n";
+    #print "@magnet\n";
+    #print "@pot\n";
+    #print "$kpoint\n\n";
+    #read the corresponding template    
     open my $in ,"< data2QE4MatCld/$QEin_name" or die "No data2QE4MatCld/$QEin_name";      
     my @QE_template =<$in>;
     close $in;
@@ -59,7 +72,10 @@ for my $qe (@QEin_MC){
     #begin trimming
     #pot
     for my $i (0 .. $ntype -1){
-        $QE_template[$pl+$i+1] = $pot[$i];
+        my @temp = split(/\s+/,$pot[$i]);
+        $QE_template[$pl+$i+1] = "$temp[0]     $ele_pot{$temp[0]}";
+       # print "$pot[$i]\n";
+       # print "$QE_template[$pl+$i+1]\n";
     }
     #kpoint
     $QE_template[$kl + 1] = $kpoint;
@@ -70,7 +86,7 @@ for my $qe (@QEin_MC){
     }
     my $trimmed = join("\n",@QE_template);
     chomp $trimmed;
-    open(FH, ">QE_trimmed/$QEin_name" ) or die $!;
+    open(FH, ">QE_trimmed4md/$QEin_name" ) or die $!;
     print FH $trimmed;
     close(FH);
    # #$QEin_name =~ s/\.in//g;
