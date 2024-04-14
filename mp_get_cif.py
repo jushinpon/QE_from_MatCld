@@ -1,3 +1,4 @@
+#pip install --upgrade mp_api
 #pip install mp_api
 #pip install mpcontribs-client
 from mp_api.client import MPRester
