@@ -76,7 +76,7 @@ for my $f (@allQEin){
                 if($QE_template[$kl] =~ /tempw/){
                     $QE_template[$kl] = "tempw = $t";                    
                 }
-                elsif($QE_template[$kl] =~ /press/){
+                elsif($QE_template[$kl] =~ /press =/){
                      $QE_template[$kl] = "press = $p";
                 }
             }#T and P done!
