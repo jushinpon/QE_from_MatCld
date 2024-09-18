@@ -22,21 +22,29 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, TimeoutException
 import os
 
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
 file_CWD = os.getcwd()
 
 input_file_name = "input.in"
 #input_file_name = "input.cif"
 
-chrome_driver_path = "/opt/webdriver/chromedriver"
+#chrome_driver_path = "/opt/webdriver/chromedriver"
 
-options = webdriver.ChromeOptions()
+# Specify the path to the downloaded ChromeDriver binary
+service = Service("/opt/webdriver/chromedriver")  # Update with your actual path
+
+
+#options = webdriver.ChromeOptions()
+options = Options()
 options.add_argument('--headless')
 options.add_argument('--disable-gpu')
 options.add_argument('--no-sandbox')
 
 # 啟動Chrome WebDriver
-driver = webdriver.Chrome(chrome_driver_path, options=options)
+#driver = webdriver.Chrome(chrome_driver_path, options=options)
+driver = webdriver.Chrome(service=service, options=options)
 
 # 輸入檔案的路徑
 input_file_path = os.path.join(os.getcwd(), input_file_name)
