@@ -9,10 +9,10 @@ die "No Dead.txt in $currentPath/QEjobs_status" unless(@all_files);
 my $submitJobs = "no";
 my %sbatch_para = (
             nodes => 1,#how many nodes for your lmp job
-            threads => 2,#modify it to 2, 4, 6 if oom problem appears
+            threads => 1,#modify it to 2, 4, 6 if oom problem appears
             cpus_per_task => 1,#useless if use "mpiexec -np"
             partition => "All",#which partition you want to use
-            runPath => "/opt/thermoPW/bin/pw.x -ndiag 1",          
+            runPath => "/opt/thermoPW-7-2_intel/bin/pw.x",          
             );
 
 my $jobNo = 1;
@@ -34,14 +34,20 @@ my $here_doc =<<"END_MESSAGE";
 #SBATCH --partition=$sbatch_para{partition}
 ##SBATCH --ntasks-per-node=12
 ##SBATCH --exclude=node23
-source /opt/intel/oneapi/setvars.sh
+#source /opt/intel/oneapi/setvars.sh
 rm -rf pwscf*
+node=$sbatch_para{nodes}
 threads=$sbatch_para{threads}
 processors=\$(nproc)
-np=\$((\$processors/\$threads))
+np=\$((\$node*\$processors/\$threads))
 export OMP_NUM_THREADS=\$threads
+#the following two are for AMD CPU if slurm chooses for you!!
+export MKL_DEBUG_CPU_TYPE=5
+export MKL_CBWR=AUTO
+export LD_LIBRARY_PATH=/opt/mpich-4.0.3/lib:/opt/intel/oneapi/mkl/latest/lib:\$LD_LIBRARY_PATH
+export PATH=/opt/mpich-4.0.3/bin:\$PATH
 
-mpiexec -np \$np $sbatch_para{runPath} -in $basename.in
+/opt/mpich-4.0.3/bin/mpiexec -np \$np $sbatch_para{runPath} -in $basename.in
 rm -rf pwscf*
 
 END_MESSAGE
