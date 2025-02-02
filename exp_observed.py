@@ -23,7 +23,7 @@ API_KEY = os.getenv("MP_API_KEY", "wCMUOEdnN6nqZSmM7707B679uUkz04Zo")  # Use an 
 # Initialize MPRester
 with MPRester(API_KEY) as mpr:
     # Create a folder to store CIF files
-    cif_dir = "cifs"
+    cif_dir = "cifs_exp"
     shutil.rmtree(cif_dir, ignore_errors=True)  # Safe removal of the directory
     os.makedirs(cif_dir, exist_ok=True)
 
