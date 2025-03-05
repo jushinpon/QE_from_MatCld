@@ -9,14 +9,15 @@ my $out_folder = "QEall_set";#folder having all subfolders (the same prefixes as
 `mkdir $currentPath/$out_folder`;
 
 ## set Temperature and press 
-my @tempw = (50,600);
+my @tempw = (50,300);
 my @press = (0);
 my %para =(#you may set QE parameters you want to modify here. Keys should be the same as used in QE
     #calculation => '"vc-md"',
-    cell_dofree => '"all"',
+    cell_dofree => '"z"',
     cell_dynamics => '"pr"',
     #vdw_corr => '"DFT-D3"', #use Van der Waals
-    dt => 20,
+    dt => 50,
+    nstep => 200,
     etot_conv_thr => "1.0d-5",#perl not know d-5, make it a string 
     forc_conv_thr => "1.0d-4",
     disk_io => '"none"',

@@ -78,6 +78,12 @@ for my $qe (@QEin_MC){
        # print "$QE_template[$pl+$i+1]\n";
     }
     #kpoint
+    #You may modify to 1 for specific dimesnion
+    #my @k_temp = split (/\s+/,$kpoint);
+    #$k_temp[0] = 1;#for x
+    #$k_temp[1] = 1;#for y
+    #$k_temp[2] = 1;#for z
+    #$kpoint = join(" ",@k_temp);    
     $QE_template[$kl + 1] = $kpoint;
     #mag
      for my $i (0 .. $ntype -1){
@@ -86,7 +92,7 @@ for my $qe (@QEin_MC){
     }
     my $trimmed = join("\n",@QE_template);
     chomp $trimmed;
-    open(FH, ">QE_trimmed4md/$QEin_name" ) or die $!;
+    open(FH, ">QE_trimmed/$QEin_name" ) or die $!;
     print FH $trimmed;
     close(FH);
    # #$QEin_name =~ s/\.in//g;

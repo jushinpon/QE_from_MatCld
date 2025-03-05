@@ -33,8 +33,11 @@ my $here_doc =<<"END_MESSAGE";
 ##SBATCH --cpus-per-task=$sbatch_para{cpus_per_task}
 #SBATCH --partition=$sbatch_para{partition}
 ##SBATCH --ntasks-per-node=12
+##SBATCH --reservation=script_test  #you may need to change it to your own reservation
+
 ##SBATCH --exclude=node23
 #source /opt/intel/oneapi/setvars.sh
+hostname
 rm -rf pwscf*
 node=$sbatch_para{nodes}
 threads=$sbatch_para{threads}
@@ -49,7 +52,9 @@ export PATH=/opt/mpich-4.0.3/bin:\$PATH
 
 /opt/mpich-4.0.3/bin/mpiexec -np \$np $sbatch_para{runPath} -in $basename.in
 rm -rf pwscf*
-
+rm -rf pwscf*
+perl /opt/qe_perl/QEout_analysis.pl
+perl /opt/qe_perl/QEout2data.pl
 END_MESSAGE
     unlink "$dirname/$basename.sh";
     open(FH, "> $dirname/$basename.sh") or die $!;

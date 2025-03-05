@@ -5,7 +5,7 @@ use POSIX;
 #use lib '.';
 #use elements;
 unlink "cif_summary.txt";
-my $maxNum = 64;#maximum number allowed in cif files
+my $maxNum = 200;#maximum number allowed in cif files
 open(my $DATA, ">cif_summary.txt");
 my $currentPath = getcwd();
 my @ciffiles = `find $currentPath/cifs -name "*.cif"`;

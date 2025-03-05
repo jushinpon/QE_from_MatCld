@@ -1,3 +1,4 @@
+
 #!/usr/bin/perl
 =b
 
@@ -39,9 +40,11 @@ print ", you need to modify heredoc for setting the largest ecutrho and ecutwfc 
 print "\nMaybe you also need to modify cell_dofree setting for your QE cases. \n\n";
 ###parameters to set first
 my $currentPath = getcwd();
-my $dir = "$currentPath/cif2data";
+my $dir = "$currentPath/cif2data";#data files
+#my $dir = "$currentPath/data4md_relaxed";
+#my $dir = "$currentPath/data4relax";
 #my @myelement =  ("B","N");#corresponding to lmp type ids
-my @datafile = `find $dir -name "*.data"`;#|grep -v "/Te_"`;#find all data files
+my @datafile = `find $dir -maxdepth 1 -name "*.data"`;#|grep -v "/Te_"`;#find all data files
 map { s/^\s+|\s+$//g; } @datafile;
 die "No data files\n" unless(@datafile);
 #collect all elements in data files
@@ -63,9 +66,11 @@ map { s/^\s+|\s+$//g; } @myelement;
 die "No elements were found\n" unless (@myelement);
 my @temperature = ("10");#temperatures for QE_MD, only template for the following sed trim
 my @pressure = ("0");#pressure for vc-md, only template for the following sed trim
-my $calculation = "vc-relax";#set temperature and pressure to be 0 0 for scf
-my $stepsize = 20;#20 ~ 0.97 fs
-my $nstep = 50;#how many steps for md for vc-relax or vc-md
+my $calculation = "vc-md";#set temperature and pressure to be 0 0 for scf
+
+
+my $stepsize = 50;#20 ~ 0.97 fs
+my $nstep = 50;#how many steps for md for vc-relax
 my $pseudo_dir = "/opt/QEpot/SSSP_efficiency_pseudos/";
 ####end of setting parameters
 ###get pot setting here!
@@ -212,7 +217,11 @@ for my $id (@datafile){
                 push @{$para{coords}},$temp;
             }
 #1 1 1.000000 4.458517505863 1.201338326940 0.873835074284 with charge
-            elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)$/ && $2 != ""){
+            #elsif(/\d+\s+(\d+)\s+([+-]?\d*\.*\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)\s+([+-]?\d*\.*\d*e?[+-]?\d*)$/ && $2 != ""){
+             elsif(/\d+\s+(\d+)\s+([+-]?\d*\.\d+)\s+([+-]?\d*\.\d*e?[+-]?\d*)\s+([+-]?\d*\.\d*e?[+-]?\d*)\s+([+-]?\d*\.\d*e?[+-]?\d*)$/){
+
+               # print "\$2:$2, $_\n";
+               # die;
                 my $ele = $ele[$1-1];
                 my $x = Math::BigFloat->new($3) - $para{xlo};
                 my $y = Math::BigFloat->new($4) - $para{ylo};
@@ -299,7 +308,7 @@ mixing_beta =   0.2
 mixing_mode = 'plain' !'local-TF'
 mixing_ndim = 8 !set 4 or 3 if OOM-killer exists (out of memory)
 diagonalization = 'david' !set cg if if OOM-killer exists (out of memory). other types can be used for scf problem.
-diago_david_ndim = 4 !If david is used for diagonalization. set 2 if OOM-killer appears.
+diago_david_ndim = 2 !If david is used for diagonalization. set 2 if OOM-killer appears.
 /
 &IONS
 ion_dynamics = "beeman"
