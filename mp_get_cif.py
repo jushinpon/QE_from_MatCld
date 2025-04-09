@@ -5,7 +5,7 @@ from mp_api.client import MPRester
 import os
 import itertools
 
-elements = ["Cu","Al"]
+elements = ["Al", "Co", "Cr", "Fe", "Mo", "Nb", "Ni", "Ta", "Ti", "W"]
 formulas = []
 
 # 生成所有可能的化學式
